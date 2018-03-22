@@ -15,7 +15,7 @@ public class Thread {
     private Integer votes;
 
     @JsonCreator
-    Thread(
+    public Thread(
             @JsonProperty(value = "author") String author,
             @JsonProperty(value = "created") Timestamp created,
             @JsonProperty(value = "forum") String forum,
@@ -30,7 +30,7 @@ public class Thread {
         this.message = message;
         this.slug = slug;
         this.title = title;
-        this.votes = votes;
+        this.votes = votes == null ? 0 : votes;
     }
 
     public String getAuthor() {

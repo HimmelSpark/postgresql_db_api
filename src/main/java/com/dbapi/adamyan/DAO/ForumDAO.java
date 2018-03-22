@@ -28,7 +28,7 @@ public class ForumDAO {
     }
 
     public Forum getForumBySlug(String slug) {
-        String query = "SELECT * FROM forums WHERE slug=?::citext";
+        String query = "SELECT posts, slug, threads, title FROM forums WHERE slug=?::citext;";
         try {
             return jdbc.queryForObject(query, forumMapper, slug);
         } catch (Exception e) {
@@ -42,7 +42,7 @@ public class ForumDAO {
                 "JOIN users ON forums.creator = users.nickname " +
                 "WHERE creator=?::citext";
         try {
-            return jdbc.queryForObject(query, forumMapper, nickname);
+            return jdbc.queryForObject(query, Forum.class, nickname);
         } catch (Exception e) {
             return null;
         }
@@ -55,7 +55,7 @@ public class ForumDAO {
                     result.getString("slug"),
                     result.getInt("threads"),
                     result.getString("title"),
-                    result.getString("user")
+                    null //TODO: разобраться, почему не видит колонку creator
             );
         }
     }

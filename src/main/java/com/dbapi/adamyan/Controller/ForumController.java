@@ -56,10 +56,12 @@ public class ForumController {
         }
 
         try {
-            threadDAO.createThread(thread, slug);
+            thread.setForum(slug);
+            threadDAO.createThread(thread);
             return ResponseEntity.status(HttpStatus.CREATED).body(thread);
         } catch (Exception e ) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new Message("Not unique slug of thread"));
+            Thread thread1 = threadDAO.getThreadBySlug(thread.getSlug());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(thread1);
         }
     }
 

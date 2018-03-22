@@ -17,7 +17,7 @@ CREATE TABLE forums (
   slug citext NOT NULL UNIQUE,
   threads NUMERIC DEFAULT 0,
   title citext NOT NULL,
-  creator citext,
+  creator citext NOT NULL ,
   FOREIGN KEY (creator) REFERENCES users(nickname)
 );
 
@@ -28,7 +28,7 @@ CREATE TABLE threads (
   created TIMESTAMP,
   forum citext,
   message citext NOT NULL,
-  slug citext UNIQUE,
+  slug citext NOT NULL UNIQUE,
   title citext NOT NULL,
   votes NUMERIC DEFAULT 0,
   FOREIGN KEY (author) REFERENCES users(nickname),
@@ -37,4 +37,8 @@ CREATE TABLE threads (
 
 SELECT * FROM users;
 
-SELECT * FROM forums WHERE slug='pirates';
+SELECT * FROM forums ORDER BY threads DESC ;
+
+SELECT * FROM threads;
+
+UPDATE forums SET threads = threads + 1 WHERE slug='pirates';
