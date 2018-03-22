@@ -24,8 +24,11 @@ public class ThreadDAO {
     private static ThreadMapper threadMapper = new ThreadMapper();
 
     public void createThread(Thread thread) {
-        String query = "INSERT INTO threads (author, created, message, title, forum, slug) VALUES (?,?,?,?,?,?)";
-        jdbc.update(query, thread.getAuthor(), thread.getCreated(), thread.getMessage(), thread.getTitle(), thread.getForum(), thread.getSlug());
+        String query = "INSERT INTO threads (author, created, message, title, forum, slug) VALUES (?,?,?,?,?,?);" +
+                "UPDATE forums SET threads = threads + 1 WHERE slug =?::citext";
+        jdbc.update(query, thread.getAuthor(), thread.getCreated(),
+                thread.getMessage(), thread.getTitle(),
+                thread.getForum(), thread.getSlug(), thread.getForum());
     }
 
     public Thread getThreadBySlug(String slug) {
