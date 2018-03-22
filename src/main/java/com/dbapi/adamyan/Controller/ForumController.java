@@ -12,6 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.List;
+
+
 @RestController
 @RequestMapping("api/forum")
 public class ForumController {
@@ -73,5 +77,15 @@ public class ForumController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(forum);
+    }
+
+    @GetMapping(path = "{slug}/threads")
+    public ResponseEntity getThreads(@PathVariable(name = "slug") String slug) {
+        List<Thread> result = threadDAO.getAllThreadsByForum(slug);
+        if (result != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find forum with slug " + slug));
     }
 }

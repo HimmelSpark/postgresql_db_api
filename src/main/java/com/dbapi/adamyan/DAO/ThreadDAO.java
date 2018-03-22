@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -36,6 +38,18 @@ public class ThreadDAO {
         try {
             return jdbc.queryForObject(query, threadMapper, slug);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Thread> getAllThreadsByForum(String slug) {
+        String query = "SELECT T.author, T.created, T.forum, T.message, T.slug, T.title, T.votes FROM threads as T " +
+                "JOIN forums as F ON (F.slug = ?);"; //TODO: почему-то возвращает все объекты
+        List<Object> params = new ArrayList<>();
+        params.add(slug);
+        try {
+            return jdbc.query(query, params.toArray(), threadMapper);
+        } catch (Exception e ) {
             return null;
         }
     }
