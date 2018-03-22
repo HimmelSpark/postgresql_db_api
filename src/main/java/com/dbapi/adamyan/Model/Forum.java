@@ -1,4 +1,4 @@
-package com.gameapi.rha.Model;
+package com.dbapi.adamyan.Model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

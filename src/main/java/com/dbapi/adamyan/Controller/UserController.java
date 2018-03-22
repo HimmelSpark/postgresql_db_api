@@ -1,13 +1,12 @@
-package com.gameapi.rha.Controller;
+package com.dbapi.adamyan.Controller;
 
 
-import com.gameapi.rha.Model.Message;
-import com.gameapi.rha.DAO.UserDAO;
-import com.gameapi.rha.Model.User;
+import com.dbapi.adamyan.DAO.UserDAO;
+import com.dbapi.adamyan.Model.Message;
+import com.dbapi.adamyan.Model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.ArrayList;

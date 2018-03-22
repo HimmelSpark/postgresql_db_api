@@ -1,7 +1,7 @@
-package com.gameapi.rha.DAO;
+package com.dbapi.adamyan.DAO;
 
 
-import com.gameapi.rha.Model.Thread;
+import com.dbapi.adamyan.Model.Thread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;

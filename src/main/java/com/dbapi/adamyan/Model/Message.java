@@ -1,4 +1,4 @@
-package com.gameapi.rha.Model;
+package com.dbapi.adamyan.Model;
 
 public class Message {
     private String message;

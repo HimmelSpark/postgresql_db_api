@@ -1,6 +1,6 @@
-package com.gameapi.rha.DAO;
+package com.dbapi.adamyan.DAO;
 
-import com.gameapi.rha.Model.User;
+import com.dbapi.adamyan.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

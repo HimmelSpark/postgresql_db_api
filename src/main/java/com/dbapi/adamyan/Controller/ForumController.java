@@ -1,11 +1,11 @@
-package com.gameapi.rha.Controller;
+package com.dbapi.adamyan.Controller;
 
-import com.gameapi.rha.DAO.ForumDAO;
-import com.gameapi.rha.DAO.ThreadDAO;
-import com.gameapi.rha.DAO.UserDAO;
-import com.gameapi.rha.Model.Forum;
-import com.gameapi.rha.Model.Message;
-import com.gameapi.rha.Model.Thread;
+import com.dbapi.adamyan.DAO.ForumDAO;
+import com.dbapi.adamyan.DAO.ThreadDAO;
+import com.dbapi.adamyan.DAO.UserDAO;
+import com.dbapi.adamyan.Model.Forum;
+import com.dbapi.adamyan.Model.Message;
+import com.dbapi.adamyan.Model.Thread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
