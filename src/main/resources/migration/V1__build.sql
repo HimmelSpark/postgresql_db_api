@@ -37,7 +37,7 @@ CREATE TABLE threads (
 
 SELECT * FROM users;
 
-SELECT * FROM forums ORDER BY threads DESC ;
+SELECT * FROM forums ORDER BY threads DESC;
 
 SELECT * FROM threads;
 
