@@ -81,11 +81,10 @@ public class ForumController {
 
     @GetMapping(path = "{slug}/threads")
     public ResponseEntity getThreads(@PathVariable(name = "slug") String slug) {
-        List<Thread> result = threadDAO.getAllThreadsByForum(slug);
-        if (result != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        }
+        if (forumDAO.getForumBySlug(slug) == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find forum with slug " + slug));
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find forum with slug " + slug));
+        List<Thread> result = threadDAO.getAllThreadsByForum(slug);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

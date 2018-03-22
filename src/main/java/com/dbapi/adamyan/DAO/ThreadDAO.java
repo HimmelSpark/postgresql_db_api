@@ -43,15 +43,10 @@ public class ThreadDAO {
     }
 
     public List<Thread> getAllThreadsByForum(String slug) {
-        String query = "SELECT T.author, T.created, T.forum, T.message, T.slug, T.title, T.votes FROM threads as T " +
-                "JOIN forums as F ON (F.slug = ?);"; //TODO: почему-то возвращает все объекты
+        String query = "SELECT author, created, forum, message, slug, title, votes FROM threads WHERE forum = ?";
         List<Object> params = new ArrayList<>();
         params.add(slug);
-        try {
-            return jdbc.query(query, params.toArray(), threadMapper);
-        } catch (Exception e ) {
-            return null;
-        }
+        return jdbc.query(query, params.toArray(), threadMapper);
     }
 
     public static class ThreadMapper implements RowMapper<Thread> {
