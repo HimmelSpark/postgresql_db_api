@@ -6,6 +6,7 @@ import com.dbapi.adamyan.DAO.UserDAO;
 import com.dbapi.adamyan.Model.Forum;
 import com.dbapi.adamyan.Model.Message;
 import com.dbapi.adamyan.Model.Thread;
+import com.dbapi.adamyan.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -37,15 +38,20 @@ public class ForumController {
     @PostMapping(path = "/create")
     public ResponseEntity createForum(@RequestBody Forum forum) {
 
-        if (userDAO.getUserByNickname(forum.getUser()) != null) {
+        User user = userDAO.getUserByNickname(forum.getUser());
+
+        if (user != null) {
             try {
+                forum.setNickname(user.getNickname());
                 forumDAO.createForum(forum);
                 return ResponseEntity.status(HttpStatus.CREATED).body(forum);
             } catch (DuplicateKeyException e) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(new Message("Not unique slug"));
+                Forum result = forumDAO.getForumBySlug(forum.getSlug());
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
             }
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new Message("Can't find user with nickname " + forum.getUser()));
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find user with nickname " + forum.getUser()));
     }
 
     @PostMapping(path = "{slug}/create")

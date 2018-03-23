@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS citext;
+
 DROP TABLE IF EXISTS threads;
 DROP TABLE IF EXISTS forums;
 DROP TABLE IF EXISTS users;
@@ -42,3 +44,7 @@ SELECT * FROM forums ORDER BY threads DESC;
 SELECT * FROM threads;
 
 UPDATE forums SET threads = threads + 1 WHERE slug='pirates';
+
+SELECT * FROM users WHERE fullname='Mia Martinez';
+
+SELECT * FROM forums WHERE creator='eis.209732Hc8RmUJU';

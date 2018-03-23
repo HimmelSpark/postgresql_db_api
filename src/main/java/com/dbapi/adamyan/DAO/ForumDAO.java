@@ -23,7 +23,7 @@ public class ForumDAO {
     private static ForumMapper forumMapper = new ForumMapper();
 
     public void createForum(Forum forum) {
-        String query = "INSERT INTO forums (slug, title, creator) VALUES (?::citext,?::citext,?::citext)";
+        String query = "INSERT INTO forums (slug, title, creator) VALUES (?::citext,?::citext,?)";
         jdbc.update(query, forum.getSlug(), forum.getTitle(), forum.getUser());
     }
 

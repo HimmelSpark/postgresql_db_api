@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -47,21 +49,34 @@ public class UserDAO {
         }
     }
 
+    public List<User> getDublicateUsers(User user) {
+        String query = "SELECT * FROM users WHERE nickname=?::citext OR email=?::citext";
+        List<Object> params = new ArrayList<>();
+        params.add(user.getNickname());
+        params.add(user.getEmail());
+        try {
+            return jdbc.query(query, params.toArray(), userMapper);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public void updateUser(User user) {
-        String query = "UPDATE users SET about=?::citext, email=?::citext, fullname=?::citext WHERE nickname=?::citext";
+        String query = "UPDATE users SET " +
+                "about=COALESCE(?, about), " +
+                "email=COALESCE(?, email), " +
+                "fullname=COALESCE(?, fullname) WHERE nickname=?::citext";
         jdbc.update(query, user.getAbout(), user.getEmail(), user.getFullname(), user.getNickname());
     }
 
     private static class UserMapper implements RowMapper<User> {
         public User mapRow(ResultSet result, int rowNum) throws SQLException {
-            User user = new User(
+            return new User(
                     result.getString("about"),
                     result.getString("email"),
                     result.getString("fullname"),
                     result.getString("nickname")
             );
-            return user;
         }
     }
-
 }
