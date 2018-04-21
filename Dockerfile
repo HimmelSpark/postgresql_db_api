@@ -50,4 +50,4 @@ RUN mvn package
 
 EXPOSE 5000
 
-CMD service postgresql start && java -Xms200M -Xmx200M -Xss256K -jar target/db-0.0.1-SNAPSHOT.jar
+CMD service postgresql start && java -Xms200M -Xmx200M -Xss256K -jar target/rha-0.0.1-SNAPSHOT.jar
