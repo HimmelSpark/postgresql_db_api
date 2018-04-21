@@ -1,18 +1,23 @@
 package com.dbapi.adamyan.Model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
 
 public class Thread {
     private String author;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private Timestamp created;
+
     private String forum;
     private String message;
     private String slug;
     private String title;
     private Integer votes;
+    private Integer id;
 
     @JsonCreator
     public Thread(
@@ -22,7 +27,8 @@ public class Thread {
             @JsonProperty(value = "message") String message,
             @JsonProperty(value = "slug") String slug,
             @JsonProperty(value = "title") String title,
-            @JsonProperty(value = "votes") Integer votes
+            @JsonProperty(value = "votes") Integer votes,
+            @JsonProperty(value = "id") Integer id
     ) {
         this.author = author;
         this.created = created;
@@ -31,6 +37,7 @@ public class Thread {
         this.slug = slug;
         this.title = title;
         this.votes = votes == null ? 0 : votes;
+        this.id = id;
     }
 
     public String getAuthor() {
@@ -87,5 +94,13 @@ public class Thread {
 
     public void setVotes(Integer votes) {
         this.votes = votes;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

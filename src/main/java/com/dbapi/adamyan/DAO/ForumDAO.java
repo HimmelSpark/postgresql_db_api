@@ -48,6 +48,19 @@ public class ForumDAO {
         }
     }
 
+    public Forum getForumByThreadId(Integer id) {
+        String query =
+                "SELECT F.posts, F.slug, F.threads, F.title, F.creator FROM posts " +
+                "JOIN threads ON (posts.thread = threads.id) " +
+                "JOIN forums AS F ON (threads.forum = F.slug) " +
+                "WHERE posts.thread = ?"; //TODO:: запрос ничего не вернул! исправить!
+        try {
+            return jdbc.queryForObject(query, forumMapper, id);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static class ForumMapper implements RowMapper<Forum> {
         public Forum mapRow(ResultSet result, int rowNum) throws SQLException {
             return new Forum(

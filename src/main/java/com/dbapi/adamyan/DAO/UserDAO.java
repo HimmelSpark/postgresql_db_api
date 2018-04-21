@@ -69,6 +69,68 @@ public class UserDAO {
         jdbc.update(query, user.getAbout(), user.getEmail(), user.getFullname(), user.getNickname());
     }
 
+//    public List<User> getNotAllUsersByForum(String since, String slug, String limit, Boolean desc) {
+//        String query = "SELECT U.id, U.about, U.email, U.nickname, U.fullname FROM forums F " +
+//                "JOIN users U ON (F.creator = U.nickname) " +
+//                "WHERE F.slug=?::citext ";
+//        List<Object> params = new ArrayList<>();
+//        params.add(slug);
+//        if (since != null) {
+//            query += "AND U.nickname<>?::citext ";
+//            params.add(since);
+//        }
+//        try {
+//            return jdbc.query(query, params.toArray(), userMapper);
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
+
+    public List<User> getNotAllUsersByForum(String since, String slug, Integer limit, Boolean desc) {
+        List<Object> params = new ArrayList<>();
+        String query =
+                "SELECT DISTINCT U.nickname, U.about, U.email, U.fullname FROM users U " +
+                "JOIN posts p ON U.nickname = p.author AND p.forum=?::citext ";
+        params.add(slug);
+
+        if (since != null) {
+            if (desc == null || (desc != null && !desc)) {
+                query += "WHERE lower(nickname) > lower(?) ";
+                params.add(since);
+            } else {
+                query += "WHERE lower(nickname) < lower(?) ";
+                params.add(since);
+            }
+        }
+
+        query +=
+                "UNION " +
+                "SELECT DISTINCT U.nickname, U.about, U.email, U.fullname FROM users U " +
+                "JOIN threads t ON U.nickname = t.author AND t.forum=?::citext ";
+        params.add(slug);
+
+        if (since != null) {
+            if (desc == null || (desc != null && !desc)) {
+                query += "WHERE lower(nickname) > lower(?) ";
+                params.add(since);
+            } else {
+                query += "WHERE lower(nickname) < lower(?) ";
+                params.add(since);
+            }
+        }
+
+        query += "ORDER BY nickname ";
+        if (desc != null && desc) {
+            query += "DESC ";
+        }
+
+        if (limit != null) {
+            query += "LIMIT ?";
+            params.add(limit);
+        }
+        return jdbc.query(query, params.toArray(), userMapper);
+    }
+
     private static class UserMapper implements RowMapper<User> {
         public User mapRow(ResultSet result, int rowNum) throws SQLException {
             return new User(

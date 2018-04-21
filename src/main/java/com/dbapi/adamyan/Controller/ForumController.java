@@ -8,13 +8,16 @@ import com.dbapi.adamyan.Model.Message;
 import com.dbapi.adamyan.Model.Thread;
 import com.dbapi.adamyan.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 
 @RestController
@@ -23,7 +26,7 @@ public class ForumController {
     private ForumDAO forumDAO;
     private UserDAO userDAO;
     private ThreadDAO threadDAO;
-
+    public static Integer count = 0;
     @Autowired
     ForumController(
             ForumDAO forumDAO,
@@ -56,22 +59,20 @@ public class ForumController {
 
     @PostMapping(path = "{slug}/create")
     public ResponseEntity createThread(@PathVariable(name = "slug") String slug, @RequestBody Thread thread) {
-
-        if (userDAO.getUserByNickname(thread.getAuthor()) == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find user with nickname " + thread.getAuthor()));
-        }
-
-        if (forumDAO.getForumBySlug(slug) == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find forum with slug " + slug));
-        }
-
+        count++;
         try {
-            thread.setForum(slug);
-            threadDAO.createThread(thread);
-            return ResponseEntity.status(HttpStatus.CREATED).body(thread);
-        } catch (Exception e ) {
-            Thread thread1 = threadDAO.getThreadBySlug(thread.getSlug());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(thread1);
+            Forum forum = forumDAO.getForumBySlug(slug);
+            if (forum == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find forum " + slug));
+            }
+            thread.setForum(forum.getSlug());
+            Thread result = threadDAO.createThread(thread);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (DuplicateKeyException e ) {
+            Thread duplicate = threadDAO.getThreadBySlug(thread.getSlug());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(duplicate);
+        } catch (DataAccessException e ) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find user " + thread.getAuthor()));
         }
     }
 
@@ -86,11 +87,30 @@ public class ForumController {
     }
 
     @GetMapping(path = "{slug}/threads")
-    public ResponseEntity getThreads(@PathVariable(name = "slug") String slug) {
+    public ResponseEntity getThreads(
+            @PathVariable(name = "slug") String slug,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "since", required = false) String since,
+            @RequestParam(name = "desc", required = false) Boolean desc
+            ) {
         if (forumDAO.getForumBySlug(slug) == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find forum with slug " + slug));
 
-        List<Thread> result = threadDAO.getAllThreadsByForum(slug);
+        List<Thread> result = threadDAO.getAllThreadsByForum(slug, limit, since, desc);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping(path = "{slug}/users")
+    public ResponseEntity getUsers (
+            @PathVariable(name = "slug") String slug,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "since", required = false) String since,
+            @RequestParam(name = "desc", required = false) Boolean desc
+    ) {
+        if (forumDAO.getForumBySlug(slug) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find forum with slug " + slug));
+        }
+        List<User> result = userDAO.getNotAllUsersByForum(since, slug, limit, desc);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
