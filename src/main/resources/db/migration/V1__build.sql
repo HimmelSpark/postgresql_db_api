@@ -1,5 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS citext;
 
+DROP TABLE IF EXISTS forum_users;
 DROP TABLE IF EXISTS votes;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS threads;
@@ -63,4 +64,11 @@ CREATE TABLE votes (
   UNIQUE (nickname, thread),
   FOREIGN KEY (thread) REFERENCES threads(id),
   FOREIGN KEY (nickname) REFERENCES users(nickname)
+);
+
+CREATE TABLE forum_users (
+  slug citext NOT NULL,
+  author citext NOT NULL,
+  UNIQUE (slug, author),
+  FOREIGN KEY (author) REFERENCES users(nickname)
 );

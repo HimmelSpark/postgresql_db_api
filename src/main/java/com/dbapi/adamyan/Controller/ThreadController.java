@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,9 +38,9 @@ public class ThreadController {
 
     @PostMapping(path = "/{slug_or_id}/create")
     public ResponseEntity createPost(
-            @RequestBody List<Post> posts,
+            @RequestBody ArrayList<Post> posts,
             @PathVariable(name = "slug_or_id") String slug_or_id
-    ) throws SQLException {
+    ) {
         Integer id;
         Thread thread = null;
         try {
@@ -50,12 +52,6 @@ public class ThreadController {
         if (thread == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find thread with slug " + slug_or_id));
         }
-
-        //TODO переместить в DAO
-//        for (Post post : posts) {
-//            post.setThread(id);
-//            post.setForum(thread.getForum());
-//        }
 
         Integer result = postDAO.createPosts(posts, thread);
         if (result == 409) {

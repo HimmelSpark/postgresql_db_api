@@ -7,10 +7,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,9 +58,8 @@ public class PostDAO {
         return posts;
     }
 
-    public Integer createPosts(List<Post> posts, Thread thread) throws SQLException {
+    public Integer createPosts(List<Post> posts, Thread thread) {
         for (Post post : posts) {
-
             post.setCreated(posts.get(0).getCreated());
             post.setThread(thread.getId());
             post.setForum(thread.getForum());
@@ -103,6 +105,32 @@ public class PostDAO {
             return pst;
         });
 
+    }
+
+    private void setMultiplePostsPath(List<Post> parents, List<Post> posts) {
+
+        System.out.println(posts);
+
+        Connection connection;
+        try {
+            connection = jdbc.getDataSource().getConnection();
+            PreparedStatement pst = connection.prepareStatement("UPDATE posts SET  path = ? WHERE id = ?");
+            for (int i = 0; i < posts.size(); i++) {
+                if (posts.get(i).getParent() == 0) {
+                    pst.setArray(1, connection.createArrayOf("INT", new Object[]{posts.get(i).getId()}));
+                } else {
+                    ArrayList arr = new ArrayList<Object>(Arrays.asList(parents.get(i).getChildren()));
+                    arr.add(posts.get(i).getId());
+                    pst.setArray(1, connection.createArrayOf("INT", arr.toArray()));
+                }
+                System.out.println(posts.get(i).getId());
+                pst.setLong(2, posts.get(i).getId());
+                pst.addBatch();
+            }
+            pst.executeBatch();
+        } catch (SQLException e) {
+            return;
+        }
     }
 
     public List<Post> getPostsOfThread(Thread thread, Integer limit, Integer since, String sort, Boolean desc) {

@@ -36,7 +36,7 @@ public class ServiceDAO {
     }
 
     public void clearDB() {
-        String sql = "TRUNCATE TABLE votes, posts, threads, forums, users";
+        String sql = "TRUNCATE TABLE forum_users, votes, posts, threads, forums, users";
         jdbc.execute(sql);
     }
 }

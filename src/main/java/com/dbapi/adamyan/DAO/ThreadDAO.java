@@ -51,7 +51,13 @@ public class ThreadDAO {
                 thread.getSlug()
         );
         incrementThreadsCountInForum(thread);
+        updateForum_Users(thread.getSlug(), thread.getAuthor());
         return result;
+    }
+
+    private void updateForum_Users(String slug, String username) {
+        String sql = "INSERT INTO forum_users (slug, author) VALUES (?::citext, ?::citext)";
+        jdbc.update(sql, slug, username);
     }
 
     private void incrementThreadsCountInForum(Thread thread) {
