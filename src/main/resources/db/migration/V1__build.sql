@@ -53,7 +53,7 @@ CREATE TABLE posts (
   path INTEGER [],
   FOREIGN KEY (author) REFERENCES users(nickname),
   FOREIGN KEY (forum)  REFERENCES forums(slug),
---   FOREIGN KEY (parent) REFERENCES posts(id),
+  --   FOREIGN KEY (parent) REFERENCES posts(id),
   FOREIGN KEY (thread) REFERENCES threads(id)
 );
 
@@ -69,6 +69,7 @@ CREATE TABLE votes (
 CREATE TABLE forum_users (
   slug citext NOT NULL,
   author citext NOT NULL,
-  UNIQUE (slug, author),
-  FOREIGN KEY (author) REFERENCES users(nickname)
+  UNIQUE (slug, author)
+  --   FOREIGN KEY (slug) REFERENCES forums(slug),
+  --   FOREIGN KEY (author) REFERENCES users(nickname)
 );

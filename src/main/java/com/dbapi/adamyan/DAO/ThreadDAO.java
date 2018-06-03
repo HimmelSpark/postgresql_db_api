@@ -51,13 +51,21 @@ public class ThreadDAO {
                 thread.getSlug()
         );
         incrementThreadsCountInForum(thread);
-        updateForum_Users(thread.getSlug(), thread.getAuthor());
+//        try {
+//            updateForum_Users(thread.getForum(), thread.getAuthor());
+//        } catch (Exception e) {
+//
+//        }
         return result;
     }
 
     private void updateForum_Users(String slug, String username) {
         String sql = "INSERT INTO forum_users (slug, author) VALUES (?::citext, ?::citext)";
-        jdbc.update(sql, slug, username);
+        try {
+            jdbc.update(sql, slug, username);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void incrementThreadsCountInForum(Thread thread) {

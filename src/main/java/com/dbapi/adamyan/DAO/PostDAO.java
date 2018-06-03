@@ -81,10 +81,13 @@ public class PostDAO {
             }
             post.setId(id);
             setPostsPath(parent, post);
-
-            String incrementPostsCount = "UPDATE forums set posts = posts + 1 WHERE slug = ?";
-            jdbc.update(incrementPostsCount, post.getForum());
         }
+
+        if (posts.size() != 0) {
+            String incrementPostsCount = "UPDATE forums set posts = posts + ? WHERE slug = ?";
+            jdbc.update(incrementPostsCount, posts.size(), posts.get(0).getForum());
+        }
+
         return 201;
     }
 
@@ -104,7 +107,6 @@ public class PostDAO {
             pst.setLong(2, body.getId());
             return pst;
         });
-
     }
 
     private void setMultiplePostsPath(List<Post> parents, List<Post> posts) {
