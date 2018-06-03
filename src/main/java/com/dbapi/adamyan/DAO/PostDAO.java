@@ -233,67 +233,7 @@ public class PostDAO {
                 params.add(thread.getId());
             }
 
-//            sql += "ORDER BY path ";
-//            if (desc) {
-//                sql += " DESC ";
-//            }
-//            sql += " , thread ";
-//            if (desc) {
-//                sql += " DESC ";
-//            }
             return jdbc.query(sql, params.toArray(), postMapper);
-//            List<Object> insertionArr = new ArrayList<>();
-//
-//            String sql = "SELECT * FROM posts JOIN ";
-//            desc = (desc != null) && desc;
-//            if (since == null) {
-//                if (desc) {
-//                    if (limit != null) {
-//                        sql += " (SELECT id FROM posts WHERE parent = 0 AND thread = ? " +
-//                                " ORDER BY path desc LIMIT ? ) AS selected ON (selected.id = path[1] AND thread = ?) ORDER BY path[1] DESC, path";
-//                        insertionArr.add(thread.getId());
-//                        insertionArr.add(limit);
-//                        insertionArr.add(thread.getId());
-//                    }
-//                }
-//                else {
-//                    if (limit != null) {
-//                        sql += " (SELECT id FROM posts WHERE parent = 0 AND thread = ? " +
-//                                " ORDER BY id LIMIT ? ) AS selected ON (thread = ? AND selected.id = path[1]) ORDER BY path";
-//                        insertionArr.add(thread.getId());
-//                        insertionArr.add(limit);
-//                        insertionArr.add(thread.getId());
-//                    }
-//                }
-//            }
-//            else {
-//                if (desc) {
-//                    if (limit != null) {
-//                        sql += "  (SELECT id FROM posts WHERE parent = 0 AND thread = ?" +
-//                                "AND path[1] < (SELECT path[1] FROM posts WHERE id = ?)" +
-//                                "ORDER BY path DESC, thread DESC LIMIT ?)" +
-//                                "AS selected ON (thread = ? AND selected.id = path[1])" +
-//                                "ORDER BY path[1] DESC, path";
-//                        insertionArr.add(thread.getId());
-//                        insertionArr.add(since);
-//                        insertionArr.add(limit);
-//                        insertionArr.add(thread.getId());
-//                    }
-//                }
-//                else {
-//                    if (limit != null) {
-//                        sql += "  (SELECT id FROM posts WHERE parent = 0 AND thread = ?" +
-//                                "AND path > (SELECT path FROM posts WHERE id = ?) ORDER BY id LIMIT ?)" +
-//                                "AS selected ON (thread = ? AND selected.id = path[1]) ORDER BY path";
-//                        insertionArr.add(thread.getId());
-//                        insertionArr.add(since);
-//                        insertionArr.add(limit);
-//                        insertionArr.add(thread.getId());
-//                    }
-//                }
-//            }
-//
-//            return jdbc.query(sql, insertionArr.toArray(), postMapper);
         }
     }
 

@@ -124,13 +124,9 @@ public class UserDAO {
 
     public List<User> getNotAllUsersByForum(String since, String slug, Integer limit, Boolean desc) {
         List<Object> params = new ArrayList<>();
-//        String sql = "SELECT U.id, U.about, U.email, U.fullname, U.nickname FROM users AS U " +
-//                "JOIN forum_users AS FU ON (U.nickname = FU.author AND FU.slug = ?) ";
-
         String sql = "SELECT U.id, U.about, U.email, U.fullname, U.nickname FROM forum_users JOIN users U ON forum_users.author = U.nickname\n" +
                 "WHERE slug = ?::citext ";
         params.add(slug);
-
         if (since != null) {
             if (desc == null || (desc != null && !desc)) {
                 sql += " AND lower(U.nickname) > lower(?) ";
@@ -140,17 +136,14 @@ public class UserDAO {
                 params.add(since);
             }
         }
-
         sql += "ORDER BY U.nickname ";
         if (desc != null && desc) {
             sql += "DESC ";
         }
-
         if (limit != null) {
             sql += "LIMIT ?";
             params.add(limit);
         }
-//        System.out.println(sql + " +++++++ SLUG " + slug);
         return jdbc.query(sql, params.toArray(), userMapper);
     }
 
