@@ -2,6 +2,7 @@ package com.dbapi.adamyan.DAO;
 
 import com.dbapi.adamyan.Model.Post;
 import com.dbapi.adamyan.Model.Thread;
+import com.dbapi.adamyan.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -88,21 +89,13 @@ public class PostDAO {
             jdbc.update(incrementPostsCount, posts.size(), posts.get(0).getForum());
         }
 
-        for (Post post : posts) {
-            try {
-                updateForum_Users(thread.getForum(), post.getAuthor());
-            } catch (Exception e) {
-
-            }
-        }
-
         return 201;
     }
 
-    private void updateForum_Users(String slug, String username) {
-        String sql = "INSERT INTO forum_users (slug, author) VALUES (?::citext, ?::citext) ON CONFLICT DO NOTHING";
+    public void updateForum_Users(String slug, User user) {
+        String sql = "INSERT INTO forum_users (slug, about, email, fullname, nickname) VALUES (?::citext, ?::citext, ?::citext, ?::citext, ?::citext) ON CONFLICT DO NOTHING";
         try {
-            jdbc.update(sql, slug, username);
+            jdbc.update(sql, slug, user.getAbout(), user.getEmail(), user.getFullname(), user.getNickname());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

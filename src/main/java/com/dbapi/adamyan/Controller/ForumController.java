@@ -67,6 +67,8 @@ public class ForumController {
             }
             thread.setForum(forum.getSlug());
             Thread result = threadDAO.createThread(thread);
+            User user = userDAO.getUserByNickname(result.getAuthor());
+            threadDAO.updateForum_Users(slug, user);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (DuplicateKeyException e ) {
             Thread duplicate = threadDAO.getThreadBySlug(thread.getSlug());

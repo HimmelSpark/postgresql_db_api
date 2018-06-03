@@ -53,12 +53,18 @@ public class ThreadController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find thread with slug " + slug_or_id));
         }
 
+
         Integer result = postDAO.createPosts(posts, thread);
+
         if (result == 409) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new Message("Wrong parents"));
         } else if (result == 404) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("404"));
         } else {
+            for (Post post : posts) {
+                User user = userDAO.getUserByNickname(post.getAuthor());
+                postDAO.updateForum_Users(thread.getForum(), user);
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(posts);
         }
     }

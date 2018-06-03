@@ -2,6 +2,7 @@ package com.dbapi.adamyan.DAO;
 
 
 import com.dbapi.adamyan.Model.Thread;
+import com.dbapi.adamyan.Model.User;
 import com.dbapi.adamyan.Model.Vote;
 import org.omg.PortableServer.THREAD_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,8 @@ public class ThreadDAO {
         String query =
                 "INSERT INTO threads " +
                 "(author, created, message, title, forum, slug) " +
-                "VALUES (?,?,?,?,?::citext,?) RETURNING *";
-        Thread result = jdbc.queryForObject(query, threadMapper,
+                "VALUES (?,?,?,?,?::citext,?) RETURNING id";
+        int result = jdbc.queryForObject(query, Integer.class,
                 thread.getAuthor(),
                 thread.getCreated(),
                 thread.getMessage(),
@@ -50,19 +51,15 @@ public class ThreadDAO {
                 thread.getForum(),
                 thread.getSlug()
         );
+        thread.setId(result);
         incrementThreadsCountInForum(thread);
-        try {
-            updateForum_Users(thread.getForum(), thread.getAuthor());
-        } catch (Exception e) {
-
-        }
-        return result;
+        return thread;
     }
 
-    private void updateForum_Users(String slug, String username) {
-        String sql = "INSERT INTO forum_users (slug, author) VALUES (?::citext, ?::citext) ON CONFLICT DO NOTHING";
+    public void updateForum_Users(String slug, User user) {
+        String sql = "INSERT INTO forum_users (slug, about, email, fullname, nickname) VALUES (?::citext, ?::citext, ?::citext, ?::citext, ?::citext) ON CONFLICT DO NOTHING";
         try {
-            jdbc.update(sql, slug, username);
+            jdbc.update(sql, slug, user.getAbout(), user.getEmail(), user.getFullname(), user.getNickname());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

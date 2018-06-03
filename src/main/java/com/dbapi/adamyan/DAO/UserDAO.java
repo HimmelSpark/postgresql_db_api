@@ -114,17 +114,9 @@ public class UserDAO {
         return jdbc.query(query, params.toArray(), userMapper);
     }
 
-//    CREATE TABLE users (
-//            id SERIAL NOT NULL PRIMARY KEY,
-//            about citext,
-//            email citext NOT NULL UNIQUE ,
-//            fullname citext NOT NULL,
-//            nickname citext NOT NULL UNIQUE
-//    );
-
-    public List<User> getNotAllUsersByForum(String since, String slug, Integer limit, Boolean desc) {
+    public List<User> getNotAllUsersByForummm(String since, String slug, Integer limit, Boolean desc) {
         List<Object> params = new ArrayList<>();
-        String sql = "SELECT U.id, U.about, U.email, U.fullname, U.nickname FROM forum_users JOIN users U ON forum_users.author = U.nickname\n" +
+        String sql = "U.about, U.email, U.fullname, U.nickname FROM forum_users JOIN users U ON forum_users.author = U.nickname\n" +
                 "WHERE slug = ?::citext ";
         params.add(slug);
         if (since != null) {
@@ -144,6 +136,36 @@ public class UserDAO {
             sql += "LIMIT ?";
             params.add(limit);
         }
+        return jdbc.query(sql, params.toArray(), userMapper);
+    }
+
+    public List<User> getNotAllUsersByForum(String since, String slug, Integer limit, Boolean desc) {
+        List<Object> params = new ArrayList<>();
+        String sql = "SELECT about, email, fullname, nickname FROM forum_users " +
+                "WHERE slug = ?::citext ";
+        params.add(slug);
+
+        if (since != null) {
+            if (desc == null || (desc != null && !desc)) {
+                sql += " AND lower(nickname) > lower(?) ";
+                params.add(since);
+            } else {
+                sql += "AND lower(nickname) < lower(?) ";
+                params.add(since);
+            }
+        }
+
+        sql += "ORDER BY nickname ";
+
+        if (desc != null && desc) {
+            sql += "DESC ";
+        }
+        if (limit != null) {
+            sql += "LIMIT ? ";
+            params.add(limit);
+        }
+
+
         return jdbc.query(sql, params.toArray(), userMapper);
     }
 
