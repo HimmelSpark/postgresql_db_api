@@ -150,7 +150,7 @@ public class UserDAO {
             sql += "LIMIT ?";
             params.add(limit);
         }
-        System.out.println(sql + " +++++++ SLUG " + slug);
+//        System.out.println(sql + " +++++++ SLUG " + slug);
         return jdbc.query(sql, params.toArray(), userMapper);
     }
 
