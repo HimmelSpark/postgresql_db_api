@@ -73,3 +73,6 @@ CREATE TABLE forum_users (
   FOREIGN KEY (slug) REFERENCES forums(slug),
   FOREIGN KEY (author) REFERENCES users(nickname)
 );
+
+CREATE INDEX IF NOT EXISTS post_path_idx on posts(path);
+CREATE INDEX IF NOT EXISTS post_created_idx on posts(created);
