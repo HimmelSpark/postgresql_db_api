@@ -69,7 +69,7 @@ CREATE TABLE votes (
 CREATE TABLE forum_users (
   slug citext NOT NULL,
   author citext NOT NULL,
-  UNIQUE (slug, author)
-  --   FOREIGN KEY (slug) REFERENCES forums(slug),
-  --   FOREIGN KEY (author) REFERENCES users(nickname)
+  UNIQUE (slug, author),
+  FOREIGN KEY (slug) REFERENCES forums(slug),
+  FOREIGN KEY (author) REFERENCES users(nickname)
 );

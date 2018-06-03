@@ -69,24 +69,7 @@ public class UserDAO {
         jdbc.update(query, user.getAbout(), user.getEmail(), user.getFullname(), user.getNickname());
     }
 
-//    public List<User> getNotAllUsersByForum(String since, String slug, String limit, Boolean desc) {
-//        String query = "SELECT U.id, U.about, U.email, U.nickname, U.fullname FROM forums F " +
-//                "JOIN users U ON (F.creator = U.nickname) " +
-//                "WHERE F.slug=?::citext ";
-//        List<Object> params = new ArrayList<>();
-//        params.add(slug);
-//        if (since != null) {
-//            query += "AND U.nickname<>?::citext ";
-//            params.add(since);
-//        }
-//        try {
-//            return jdbc.query(query, params.toArray(), userMapper);
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
-
-    public List<User> getNotAllUsersByForum(String since, String slug, Integer limit, Boolean desc) {
+    public List<User> getNotAllUsersByForumm(String since, String slug, Integer limit, Boolean desc) {
         List<Object> params = new ArrayList<>();
         String query =
                 "SELECT DISTINCT U.nickname, U.about, U.email, U.fullname FROM users U " +
@@ -129,6 +112,46 @@ public class UserDAO {
             params.add(limit);
         }
         return jdbc.query(query, params.toArray(), userMapper);
+    }
+
+//    CREATE TABLE users (
+//            id SERIAL NOT NULL PRIMARY KEY,
+//            about citext,
+//            email citext NOT NULL UNIQUE ,
+//            fullname citext NOT NULL,
+//            nickname citext NOT NULL UNIQUE
+//    );
+
+    public List<User> getNotAllUsersByForum(String since, String slug, Integer limit, Boolean desc) {
+        List<Object> params = new ArrayList<>();
+//        String sql = "SELECT U.id, U.about, U.email, U.fullname, U.nickname FROM users AS U " +
+//                "JOIN forum_users AS FU ON (U.nickname = FU.author AND FU.slug = ?) ";
+
+        String sql = "SELECT U.id, U.about, U.email, U.fullname, U.nickname FROM forum_users JOIN users U ON forum_users.author = U.nickname\n" +
+                "WHERE slug = ?::citext ";
+        params.add(slug);
+
+        if (since != null) {
+            if (desc == null || (desc != null && !desc)) {
+                sql += " AND lower(U.nickname) > lower(?) ";
+                params.add(since);
+            } else {
+                sql += "AND lower(U.nickname) < lower(?) ";
+                params.add(since);
+            }
+        }
+
+        sql += "ORDER BY U.nickname ";
+        if (desc != null && desc) {
+            sql += "DESC ";
+        }
+
+        if (limit != null) {
+            sql += "LIMIT ?";
+            params.add(limit);
+        }
+        System.out.println(sql + " +++++++ SLUG " + slug);
+        return jdbc.query(sql, params.toArray(), userMapper);
     }
 
     private static class UserMapper implements RowMapper<User> {

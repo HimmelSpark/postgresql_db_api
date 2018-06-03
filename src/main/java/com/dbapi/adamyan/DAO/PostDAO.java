@@ -88,7 +88,24 @@ public class PostDAO {
             jdbc.update(incrementPostsCount, posts.size(), posts.get(0).getForum());
         }
 
+        for (Post post : posts) {
+            try {
+                updateForum_Users(thread.getForum(), post.getAuthor());
+            } catch (Exception e) {
+
+            }
+        }
+
         return 201;
+    }
+
+    private void updateForum_Users(String slug, String username) {
+        String sql = "INSERT INTO forum_users (slug, author) VALUES (?::citext, ?::citext) ON CONFLICT DO NOTHING";
+        try {
+            jdbc.update(sql, slug, username);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void setPostsPath(Post chuf, Post body) {
