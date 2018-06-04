@@ -90,10 +90,12 @@ public class PostDAO {
         return posts;
     }
 
-    public Integer createPosts(List<Post> posts, Thread thread) {
+    public Integer createPostss(List<Post> posts, Thread thread, List<Post> parents) {
+        int i = 0;
         for (Post post : posts) {
 
-            Post parent = getPostById(post.getParent());
+            Post parent = parents.get(i);
+            i++;
 
             String query = "INSERT INTO posts (author, created, forum, message, parent, thread) " +
                     "VALUES (?, ?::TIMESTAMP WITH TIME ZONE, ?, ?, ?, ?) RETURNING id";
@@ -115,7 +117,58 @@ public class PostDAO {
         return 201;
     }
 
-    public Integer createPostss(List<Post> posts, Thread thread) {
+    public Integer createPosts(List<Post> posts, Thread thread, List<Post> parents) {
+        try (Connection connection = jdbc.getDataSource().getConnection()) {
+            PreparedStatement pst = connection.prepareStatement("INSERT INTO posts (id, author, created, forum, message, parent, thread, path) " +
+                    "VALUES (?,?, ?::TIMESTAMP WITH TIME ZONE, ?, ?, ?, ?, ?)");
+            int i = 0;
+            for (Post post : posts) {
+                ArrayList arrObj;
+                Post parent = parents.get(i);
+                i++;
+                Integer id = jdbc.queryForObject("SELECT nextval('posts_id_seq')", Integer.class);
+                if (post.getParent() == 0) {
+                    ArrayList arr = new ArrayList<>(Arrays.asList(id));
+                    arrObj = arr;
+                } else {
+                    ArrayList arr = new ArrayList<>(Arrays.asList(parent.getChildren()));
+                    arr.add(id);
+                    arrObj = arr;
+                }
+
+                post.setId(id);
+                post.setChildren(arrObj.toArray());
+                ArrayList finalArrObj = arrObj;
+                pst.setInt(1, post.getId());
+                pst.setString(2, post.getAuthor());
+                pst.setString(3, post.getCreated());
+                pst.setString(4, post.getForum());
+                pst.setString(5, post.getMessage());
+                pst.setLong(6, post.getParent());
+                pst.setLong(7, post.getThread());
+//                pst.setBoolean(4, post.getIsedited());
+                pst.setArray(8, connection.createArrayOf("int", finalArrObj.toArray()));
+
+                pst.addBatch();
+
+            }
+            pst.executeBatch();
+            connection.close();
+
+            if (posts.size() != 0) {
+                String incrementPostsCount = "UPDATE forums set posts = posts + ? WHERE slug = ?";
+                jdbc.update(incrementPostsCount, posts.size(), posts.get(0).getForum());
+            }
+
+            return 201;
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return 404;
+        }
+    }
+
+    public Integer createPostsss(List<Post> posts, Thread thread) {
         if (posts.size() == 0) {
             return 201;
         }

@@ -53,19 +53,19 @@ public class ThreadController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find thread with slug " + slug_or_id));
         }
 
+        List<Post> parents = new ArrayList<>();
         for (Post post : posts) {
             post.setCreated(posts.get(0).getCreated());
             post.setThread(thread.getId());
             post.setForum(thread.getForum());
             Post parent = postDAO.getPostById(post.getParent());
-            // Если нет родителя и он сам не корневой, то кака
-            // Либо есть родитель, но не совпали треды
             if ((parent == null && post.getParent() != 0) || (parent != null && !parent.getThread().equals(post.getThread()))) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new Message("Wrong parents"));
             }
+            parents.add(parent);
         }
 
-        Integer result = postDAO.createPosts(posts, thread);
+        Integer result = postDAO.createPosts(posts, thread, parents);
 
         if (result == 404) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("404"));

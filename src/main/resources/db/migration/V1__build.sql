@@ -76,12 +76,11 @@ CREATE TABLE forum_users (
 );
 
 
+-- DROP INDEX IF EXISTS posts_parent_thread_idx; -- подумать над 3 сортировкой
 -- CREATE INDEX IF NOT EXISTS posts_parent_thread_idx on posts(parent, thread);
-DROP INDEX IF EXISTS posts_parent_thread_idx;
--- CREATE INDEX IF NOT EXISTS posts_parent_thread_idx on posts(thread, parent);
 -- добавить по ловерам
 DROP INDEX IF EXISTS posts_flat;
--- CREATE INDEX IF NOT EXISTS posts_flat on posts(thread, created, id);
+CREATE INDEX IF NOT EXISTS posts_flat on posts(thread, created, id);
 --
 DROP INDEX IF EXISTS threads_by_forum;
 CREATE INDEX IF NOT EXISTS threads_by_forum on threads(forum, created);
