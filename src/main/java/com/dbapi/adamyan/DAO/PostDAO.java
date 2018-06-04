@@ -40,6 +40,37 @@ public class PostDAO {
         }
     }
 
+    public List<Post> getPostsById(List<Post> postList) {
+        try (Connection connection = jdbc.getDataSource().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM posts WHERE id = ?");
+            for (Post post : postList) {
+                if (post.getParent() != 0) {
+                    preparedStatement.setInt(1, post.getParent());
+                    preparedStatement.addBatch();
+                }
+            }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Post> result = new ArrayList<>();
+            while (resultSet.next()) {
+                result.add(new Post(
+                        resultSet.getInt("id"),
+                        resultSet.getString("author"),
+                        resultSet.getString("created"),
+                        resultSet.getString("forum"),
+                        resultSet.getBoolean("idEdited"),
+                        resultSet.getString("message"),
+                        resultSet.getInt("parent"),
+                        resultSet.getInt("thread"),
+                        new Object[]{resultSet.getArray("children")}
+                ));
+            }
+            return result;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
     public Post getPostInThread(Thread thread, Integer id) {
         String sql = "SELECT * FROM posts WHERE thread=? AND id=?";
         try {
@@ -61,16 +92,8 @@ public class PostDAO {
 
     public Integer createPosts(List<Post> posts, Thread thread) {
         for (Post post : posts) {
-            post.setCreated(posts.get(0).getCreated());
-            post.setThread(thread.getId());
-            post.setForum(thread.getForum());
-            Post parent = getPostById(post.getParent());
 
-            // Если нет родителя и он сам не корневой, то кака
-            // Либо есть родитель, но не совпали треды
-            if ((parent == null && post.getParent() != 0) || (parent != null && !parent.getThread().equals(post.getThread()))) {
-                return 409;
-            }
+            Post parent = getPostById(post.getParent());
 
             String query = "INSERT INTO posts (author, created, forum, message, parent, thread) " +
                     "VALUES (?, ?::TIMESTAMP WITH TIME ZONE, ?, ?, ?, ?) RETURNING id";
@@ -90,6 +113,66 @@ public class PostDAO {
         }
 
         return 201;
+    }
+
+    public Integer createPostss(List<Post> posts, Thread thread) {
+        if (posts.size() == 0) {
+            return 201;
+        }
+//        List<Post> parents = getPostsById(posts);
+//        if (parents.size() == 0) {
+//            return 201;
+//        }
+
+        String query = "INSERT INTO posts (author, created, forum, message, parent, thread) " +
+                "VALUES (?, ?::TIMESTAMP WITH TIME ZONE, ?, ?, ?, ?) RETURNING id";
+        try (Connection connection = jdbc.getDataSource().getConnection()){
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            for (Post post : posts){
+                Post parent = getPostById(post.getParent());
+                post.setCreated(posts.get(0).getCreated());
+                post.setThread(thread.getId());
+                post.setForum(thread.getForum());
+
+                try  {
+                    if ((parent == null && post.getParent() != 0) || (parent != null && !parent.getThread().equals(post.getThread()))) {
+                        return 409;
+                    }
+                } catch (Exception e) {
+                    return 409;
+                }
+
+                preparedStatement.setString(1, post.getAuthor());
+                preparedStatement.setString(2, post.getCreated());
+                preparedStatement.setString(3, post.getForum());
+                preparedStatement.setString(4, post.getMessage());
+                preparedStatement.setInt(5, post.getParent());
+                preparedStatement.setInt(6, post.getThread());
+
+                preparedStatement.addBatch();
+            }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            int i = 0;
+            while (resultSet.next()) {
+                System.out.println(resultSet.getInt("id"));
+                posts.get(i).setId(resultSet.getInt("id"));
+                i++;
+            }
+
+            if (posts.size() != 0) {
+                String incrementPostsCount = "UPDATE forums set posts = posts + ? WHERE slug = ?";
+                jdbc.update(incrementPostsCount, posts.size(), posts.get(0).getForum());
+            }
+
+            return 201;
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return 500;
+        } catch (DataAccessException e) {
+            System.err.println(e.getMessage());
+            return 404;
+        }
     }
 
     public void updateForum_Users(String slug, User user) {

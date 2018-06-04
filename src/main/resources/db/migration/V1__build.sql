@@ -78,10 +78,10 @@ CREATE TABLE forum_users (
 
 -- CREATE INDEX IF NOT EXISTS posts_parent_thread_idx on posts(parent, thread);
 DROP INDEX IF EXISTS posts_parent_thread_idx;
-CREATE INDEX IF NOT EXISTS posts_parent_thread_idx on posts(thread, parent);
+-- CREATE INDEX IF NOT EXISTS posts_parent_thread_idx on posts(thread, parent);
 -- добавить по ловерам
 DROP INDEX IF EXISTS posts_flat;
-CREATE INDEX IF NOT EXISTS posts_flat on posts(thread, created, id);
+-- CREATE INDEX IF NOT EXISTS posts_flat on posts(thread, created, id);
 --
 DROP INDEX IF EXISTS threads_by_forum;
 CREATE INDEX IF NOT EXISTS threads_by_forum on threads(forum, created);
@@ -92,7 +92,6 @@ CREATE INDEX IF NOT EXISTS threads_slug on threads(slug);
 DROP INDEX IF EXISTS  forum_users_slug;
 CREATE INDEX IF NOT EXISTS forum_users_slug ON forum_users(slug);
 CLUSTER forum_users USING forum_users_slug;
-
 -- users of forum
 DROP INDEX IF EXISTS users_lower_nickname;
 CREATE INDEX users_lower_nickname on users(lower(nickname));
