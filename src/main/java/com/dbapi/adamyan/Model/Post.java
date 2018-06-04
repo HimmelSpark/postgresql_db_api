@@ -49,6 +49,10 @@ public class Post {
             this.created = created;
         }
         this.children = children;
+
+        if (this.getParent() == null) {
+            System.err.println("SUUUUUUUUUUUUQAAAAAAAAAAAAA!");
+        }
     }
 
     public Integer getId() {

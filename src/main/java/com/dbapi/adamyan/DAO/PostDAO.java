@@ -66,7 +66,6 @@ public class PostDAO {
             }
             return result;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -144,7 +143,10 @@ public class PostDAO {
                 pst.setString(3, post.getCreated());
                 pst.setString(4, post.getForum());
                 pst.setString(5, post.getMessage());
-                pst.setLong(6, post.getParent());
+                pst.setInt(6, post.getParent());
+                if (post.getParent() == null) {
+                    System.err.println("------------------------------------------------------------------------------");
+                }
                 pst.setLong(7, post.getThread());
 //                pst.setBoolean(4, post.getIsedited());
                 pst.setArray(8, connection.createArrayOf("int", finalArrObj.toArray()));
@@ -163,7 +165,6 @@ public class PostDAO {
             return 201;
 
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
             return 404;
         }
     }
@@ -220,10 +221,8 @@ public class PostDAO {
             return 201;
 
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
             return 500;
         } catch (DataAccessException e) {
-            System.err.println(e.getMessage());
             return 404;
         }
     }
@@ -257,8 +256,6 @@ public class PostDAO {
 
     private void setMultiplePostsPath(List<Post> parents, List<Post> posts) {
 
-        System.out.println(posts);
-
         Connection connection;
         try {
             connection = jdbc.getDataSource().getConnection();
@@ -271,7 +268,6 @@ public class PostDAO {
                     arr.add(posts.get(i).getId());
                     pst.setArray(1, connection.createArrayOf("INT", arr.toArray()));
                 }
-                System.out.println(posts.get(i).getId());
                 pst.setLong(2, posts.get(i).getId());
                 pst.addBatch();
             }
@@ -327,6 +323,8 @@ public class PostDAO {
 
             if (desc != null && desc) {
                 sql += "DESC, id DESC ";
+            } else {
+                sql += ", id ";
             }
 
             if (limit != null) {
@@ -360,10 +358,84 @@ public class PostDAO {
                 params.add(thread.getId());
                 params.add(limit);
                 params.add(thread.getId());
+
             }
 
             return jdbc.query(sql, params.toArray(), postMapper);
         }
+    }
+
+
+    public List<Post> getPosts(Thread thread, Integer limit, Integer since, String sort, Boolean desc) {
+        long threadId = thread.getId();
+        List<Object> myObj = new ArrayList<>();
+        String asc = desc ? "<" : ">";
+        String myStr = "";
+        if (sort == null)
+            sort = "flat";
+        switch (sort) {
+            case "flat":
+                myStr = "select * from posts where thread = ? ";
+                myObj.add(threadId);
+                if (since != null) {
+                    myStr += " and id " + asc + "?";
+                    myObj.add(since);
+                }
+                myStr += " order by created ";
+                if (desc != null && desc) {
+                    myStr += " desc, id desc";
+                } else {
+                    myStr += ", id";
+                }
+                if (limit != null) {
+                    myStr += " limit ? ";
+                    myObj.add(limit);
+                }
+                break;
+
+            case "tree":
+                myStr = "select * from posts where thread = ? ";
+                myObj.add(threadId);
+                if (since != null) {
+                    myStr += " and path" + asc +" (select path from posts where id = ?) ";
+                    myObj.add(since);
+                }
+                myStr += " order by path ";
+                if (desc != null && desc) {
+                    myStr += " desc";
+                }
+                if (limit != null) {
+                    myStr += " limit ? ";
+                    myObj.add(limit);
+                }
+                break;
+            case "parent_tree":
+               myStr += "SELECT * FROM posts WHERE thread=? ";
+                myObj.add(thread.getId());
+
+                if (since != null) {
+                    if (desc) {
+                        myStr += " AND path < (SELECT path FROM posts WHERE id=?) ";
+                    } else {
+                        myStr += " AND path > (SELECT path FROM posts WHERE id=?) ";
+                    }
+                    myObj.add(since);
+                }
+
+                myStr += "ORDER BY path ";
+
+                if (desc != null && desc) {
+                    myStr += "DESC, id DESC ";
+                }
+
+                if (limit != null) {
+                    myStr += "LIMIT ?;";
+                    myObj.add(limit);
+                }
+
+                break;
+        }
+        return jdbc.query(myStr, myObj.toArray(), postMapper);
     }
 
     public void updatePost(Integer id, Post post) {

@@ -189,6 +189,12 @@ public class ThreadController {
         if (thread == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("Can't find thread"));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(postDAO.getPostsOfThread(thread, limit, since, sort, desc));
+        List<Post> result = postDAO.getPostsOfThread(thread, limit, since, sort, desc);
+        for (Post post : result) {
+            if (post.getParent() == null) {
+                System.err.println("ĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀáĀá");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
