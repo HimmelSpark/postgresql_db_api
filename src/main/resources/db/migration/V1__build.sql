@@ -76,34 +76,34 @@ CREATE TABLE forum_users (
 );
 
 
--- DROP INDEX IF EXISTS posts_parent_thread_idx; -- подумать над 3 сортировкой
--- CREATE INDEX IF NOT EXISTS posts_parent_thread_idx on posts(parent, thread);
+DROP INDEX IF EXISTS posts_parent_thread_idx; -- подумать над 3 сортировкой
+CREATE INDEX IF NOT EXISTS posts_parent_thread_idx on posts(parent, thread);
 -- -- добавить по ловерам
--- DROP INDEX IF EXISTS posts_flat;
--- CREATE INDEX IF NOT EXISTS posts_flat on posts(thread, created, id);
+DROP INDEX IF EXISTS posts_flat;
+CREATE INDEX IF NOT EXISTS posts_flat on posts(thread, created, id);
 -- --
--- DROP INDEX IF EXISTS threads_by_forum;
--- CREATE INDEX IF NOT EXISTS threads_by_forum on threads(forum, created);
+DROP INDEX IF EXISTS threads_by_forum;
+CREATE INDEX IF NOT EXISTS threads_by_forum on threads(forum, created);
 -- --
--- DROP INDEX IF EXISTS threads_slug;
--- CREATE INDEX IF NOT EXISTS threads_slug on threads(lower(slug));
+DROP INDEX IF EXISTS threads_slug;
+CREATE INDEX IF NOT EXISTS threads_slug on threads(lower(slug));
 -- -- forum users
--- DROP INDEX IF EXISTS  forum_users_slug;
--- CREATE INDEX IF NOT EXISTS forum_users_slug ON forum_users(slug);
--- CLUSTER forum_users USING forum_users_slug;
+DROP INDEX IF EXISTS  forum_users_slug;
+CREATE INDEX IF NOT EXISTS forum_users_slug ON forum_users(slug);
+CLUSTER forum_users USING forum_users_slug;
 -- -- users of forum
--- DROP INDEX IF EXISTS users_lower_nickname;
--- CREATE INDEX users_lower_nickname on users(lower(nickname));
+DROP INDEX IF EXISTS users_lower_nickname;
+CREATE INDEX users_lower_nickname on users(lower(nickname));
 --
 -- --
--- DROP INDEX IF EXISTS forums_slug;
--- CREATE INDEX forums_slug on forums(lower(slug));
+DROP INDEX IF EXISTS forums_slug;
+CREATE INDEX forums_slug on forums(lower(slug));
 --
 --
 -- -- select * from pg_stat_statements order by total_time/calls desc;
 --
--- DROP INDEX IF EXISTS posts_thread_path;
--- CREATE INDEX posts_thread_path ON posts(thread, path);
+DROP INDEX IF EXISTS posts_thread_path;
+CREATE INDEX posts_thread_path ON posts(thread, path);
 --
 -- -- EXPLAIN ANALYSE SELECT * FROM threads WHERE lower(slug) = lower('kaka');
 --

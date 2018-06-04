@@ -128,11 +128,13 @@ public class PostController {
         }
         kostyl.put("message", post.getMessage());
         kostyl.put("thread", post.getThread());
+        kostyl.put("parent", post.getParent());
 
         if (related == null) {
             result.put("post", kostyl);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
+
         for (String temp : related) {
             switch (temp) {
                 case "user":
@@ -149,6 +151,7 @@ public class PostController {
                     break;
             }
         }
+
         result.put("post", kostyl);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
