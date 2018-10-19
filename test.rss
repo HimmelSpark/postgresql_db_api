@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE recipe>
-<recipe name="хлеб" preptime="5min" cooktime="180min">
+<recipe name="bbb" preptime="5min" cooktime="180min">
    <title>
-      Простой хлеб
+      bbbb
    </title>
    <composition>
-      <ingredient amount="3" unit="стакан">Мука</ingredient>
-      <ingredient amount="0.25" unit="грамм">Дрожжи</ingredient>
-      <ingredient amount="1.5" unit="стакан">Тёплая вода</ingredient>
+      <ingredient amount="3" unit="стакан">bbbb</ingredient>
+      <ingredient amount="0.25" unit="грамм">bbbb</ingredient>
+      <ingredient amount="1.5" unit="стакан">bb</ingredient>
    </composition>
    <instructions>
      <step>
-        Смешать все ингредиенты и тщательно замесить. 
+        bbbbbbbbbbb. 
      </step>
      <step>
-        Закрыть тканью и оставить на один час в тёплом помещении. 
+        bbbbbbbbbbbbbbbb. 
      </step>
      <!-- 
         <step>
-           Почитать вчерашнюю газету. 
+           fasdafsadsd. 
         </step>
-         - это сомнительный шаг...
+         - fadsadfdscfassf
       -->
      <step>
-        Замесить ещё раз, положить на противень и поставить в духовку.
+        safdfsfdfdvcdfgfdfadf
      </step>
    </instructions>
 </recipe>
