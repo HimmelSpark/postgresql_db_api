@@ -1,30 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE name [ <!ENTITY kek SYSTEM “file:///etc/passwd”>]>
-<!DOCTYPE recipe>
-<recipe name="хлеб" preptime="5min" cooktime="180min">
-   <title>
-      <name>Hello, &lol;</name>
-   </title>
-   <composition>
-      <ingredient amount="3" unit="стакан">Мука</ingredient>
-      <ingredient amount="0.25" unit="грамм">Дрожжи</ingredient>
-      <ingredient amount="1.5" unit="стакан">Тёплая вода</ingredient>
-   </composition>
-   <instructions>
-     <step>
-        Смешать все ингредиенты и тщательно замесить. 
-     </step>
-     <step>
-        Закрыть тканью и оставить на один час в тёплом помещении. 
-     </step>
-     <!-- 
-        <step>
-           Почитать вчерашнюю газету. 
-        </step>
-         - это сомнительный шаг...
-      -->
-     <step>
-        Замесить ещё раз, положить на противень и поставить в духовку.
-     </step>
-   </instructions>
-</recipe>
+<?xml version="1.0"?>  
+<Catalog>  
+   <Book id="bk101">  
+      <Author>Garghentini, Davide</Author>  
+      <Title>XML Developer's Guide</Title>  
+      <Genre>Computer</Genre>  
+      <Price>44.95</Price>  
+      <PublishDate>2000-10-01</PublishDate>  
+      <Description>An in-depth look at creating applications   
+      with XML.</Description>  
+   </Book>  
+   <Book id="bk102">  
+      <Author>Garcia, Debra</Author>  
+      <Title>Midnight Rain</Title>  
+      <Genre>Fantasy</Genre>  
+      <Price>5.95</Price>  
+      <PublishDate>2000-12-16</PublishDate>  
+      <Description>A former architect battles corporate zombies,   
+      an evil sorceress, and her own childhood to become queen   
+      of the world.</Description>  
+   </Book>  
+</Catalog>  
