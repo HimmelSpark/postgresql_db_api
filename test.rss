@@ -1,29 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE recipe>
-<recipe name="bbb" preptime="5min" cooktime="180min">
-   <title>
-      bbbb
-   </title>
-   <composition>
-      <ingredient amount="3" unit="стакан">bbbb</ingredient>
-      <ingredient amount="0.25" unit="грамм">bbbb</ingredient>
-      <ingredient amount="1.5" unit="стакан">bb</ingredient>
-   </composition>
-   <instructions>
-     <step>
-        bbbbbbbbbbb. 
-     </step>
-     <step>
-        bbbbbbbbbbbbbbbb. 
-     </step>
-     <!-- 
-        <step>
-           fasdafsadsd. 
-        </step>
-         - fadsadfdscfassf
-      -->
-     <step>
-        safdfsfdfdvcdfgfdfadf
-     </step>
-   </instructions>
-</recipe>
+<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
